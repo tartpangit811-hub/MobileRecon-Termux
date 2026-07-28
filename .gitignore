@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 *.log
 .env
+reports/
+*_backup*.py
+google_report.txt
