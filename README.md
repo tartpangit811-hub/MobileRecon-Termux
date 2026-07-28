@@ -4,7 +4,17 @@
 # MobileRecon-Termux
 
 ## Overview
+## Features
 
+- Device Information Collection
+- Network Information Gathering
+- Security Audit Reports
+- System Diagnostics
+- Storage Analysis
+- Battery Health Monitoring
+- Wi-Fi Information Scanner
+- Export Reports to File
+- Lightweight and Termux Friendly
 MobileRecon-Termux is an all-in-one information gathering and security reporting toolkit designed for Android Termux users.
 ![Banner](Images/banner.png)
 
