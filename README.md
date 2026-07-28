@@ -1,22 +1,7 @@
-# 📱 MobileRecon-Termux
+
 ![MobileRecon-Termux Banner](01c89d9c-5bc8-4c69-8763-da63a88bc800.png)
 
 # MobileRecon-Termux
-
-## Overview
-## Features
-
-- Device Information Collection
-- Network Information Gathering
-- Security Audit Reports
-- System Diagnostics
-- Storage Analysis
-- Battery Health Monitoring
-- Wi-Fi Information Scanner
-- Export Reports to File
-- Lightweight and Termux Friendly
-MobileRecon-Termux is an all-in-one information gathering and security reporting toolkit designed for Android Termux users.
-![Banner](Images/banner.png)
 
 ## Overview
 
