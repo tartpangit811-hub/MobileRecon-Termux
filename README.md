@@ -1,4 +1,3 @@
-
 ![MobileRecon-Termux Banner](01c89d9c-5bc8-4c69-8763-da63a88bc800.png)
 
 # MobileRecon-Termux
@@ -7,19 +6,21 @@
 
 MobileRecon-Termux is an all-in-one information gathering and security reporting toolkit designed for Android Termux users.
 
-This project provides useful tools for domain analysis, DNS lookups, WHOIS information, SSL certificate inspection, security header analysis, and professional report generation.
+This project provides useful security analysis tools for domain reconnaissance, DNS information gathering, WHOIS lookup, SSL certificate checking, security header analysis, and automated security report generation.
 
 ---
 
 ## Features
 
 - DNS Lookup
-- WHOIS Lookup
-- IP Information
-- SSL Certificate Analysis
+- DNS Records Analysis (A, MX, NS, TXT)
+- WHOIS Information Lookup
+- IP Information Lookup
+- SSL Certificate Check
 - Security Header Analysis
+- Subdomain Discovery
 - Password Generator
-- HTML Report Generator
+- Security Report Generator
 - Termux Friendly Interface
 
 ---
@@ -37,48 +38,3 @@ git clone https://github.com/tartpangit811-hub/MobileRecon-Termux.git
 cd MobileRecon-Termux
 
 pip install -r requirements.txt
-```
-
-## Usage
-
-```bash
-python mobilerecon.py
-```
-
----
-
-## Project Structure
-
-```text
-MobileRecon-Termux/
-│
-├── README.md
-├── requirements.txt
-├── mobilerecon.py
-│
-├── Modules/
-│   ├── dns_lookup.py
-│   ├── whois_lookup.py
-│   ├── ssl_check.py
-│   ├── headers.py
-│   └── report.py
-│
-├── Images/
-│   └── banner.png
-│
-└── Reports/
-```
-
----
-
-## Disclaimer
-
-This project is intended for educational and authorized security assessment purposes only.
-
-Always obtain permission before testing or analyzing systems.
-
----
-
-## Author
-
-Noel E. Rosas Jr.
