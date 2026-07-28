@@ -10,25 +10,27 @@ from datetime import datetime
 
 
 def banner():
-    print("=" * 40)
-    print("       MobileRecon-Termux")
-    print("=" * 40)
+
+    print("""
+===================================
+       MobileRecon-Termux
+===================================
+""")
 
 
 def generate_password():
 
     length = int(input("\nPassword length: "))
 
-    characters = string.ascii_letters + string.digits + "!@#$%^&*"
+    chars = string.ascii_letters + string.digits + "!@#$%^&*"
 
     password = ""
 
     for i in range(length):
-        password += random.choice(characters)
+        password += random.choice(chars)
 
-    print("\n[+] Generated Password:")
+    print("\nGenerated Password:")
     print(password)
-
 
 
 def dns_lookup():
@@ -43,40 +45,47 @@ def dns_lookup():
 
         print("IP Address:", ip)
 
-    except Exception as e:
-        print("Error:", e)
+    except:
 
-
+        print("Unable to resolve domain")
 
 def whois_lookup():
 
     domain = input("\nEnter domain: ")
 
-    print(f"\n[+] WHOIS Lookup for {domain}")
+    print(f"\n[+] WHOIS Information for {domain}")
 
     try:
 
-        result = whois.whois(domain)
+        data = whois.whois(domain)
 
-        print("Registrar:", result.registrar)
-        print("Creation Date:", result.creation_date)
-        print("Expiration Date:", result.expiration_date)
-        print("Name Servers:", result.name_servers)
+        print("\nRegistrar:")
+        print(data.registrar)
+
+        print("\nCreation Date:")
+        print(data.creation_date)
+
+        print("\nExpiration Date:")
+        print(data.expiration_date)
 
     except Exception as e:
-        print("Error:", e)
+
+        print("WHOIS Error:", e)
 
 
 
 def security_header():
 
-    url = input("\nEnter website URL (https://example.com): ")
+    domain = input("\nEnter domain: ")
+
+    print(f"\n[+] Security Headers for {domain}")
 
     try:
 
-        response = requests.get(url)
-
-        print("\n[+] Security Headers")
+        response = requests.get(
+            "https://" + domain,
+            timeout=5
+        )
 
         headers = [
             "Content-Security-Policy",
@@ -86,22 +95,24 @@ def security_header():
         ]
 
         for header in headers:
+
             print(
                 header,
                 ":",
                 response.headers.get(header)
             )
 
-    except Exception as e:
-        print("Error:", e)
+    except:
+
+        print("Unable to check headers")
 
 
 
-def ssl_certificate_check():
+def ssl_check():
 
     domain = input("\nEnter domain: ")
 
-    print(f"\n[+] SSL Certificate Check for {domain}")
+    print(f"\n[+] SSL Certificate Information for {domain}")
 
     try:
 
@@ -115,10 +126,18 @@ def ssl_certificate_check():
             with context.wrap_socket(
                 sock,
                 server_hostname=domain
-            ):
+            ) as ssock:
 
-                print("[+] SSL Certificate is valid")
+                cert = ssock.getpeercert()
 
+                print("\nIssuer:")
+                print(cert.get("issuer"))
+
+                print("\nValid From:")
+                print(cert.get("notBefore"))
+
+                print("\nValid Until:")
+                print(cert.get("notAfter"))
 
     except Exception as e:
 
@@ -138,14 +157,9 @@ def ip_lookup():
 
         print("IP Address:", ip)
 
-        hostname = socket.gethostbyaddr(ip)
+    except:
 
-        print("Hostname:", hostname[0])
-
-
-    except Exception as e:
-
-        print("Error:", e)
+        print("Unable to resolve IP")
 
 def dns_records():
 
@@ -154,9 +168,18 @@ def dns_records():
     print(f"\n[+] DNS Records for {domain}")
 
     resolver = dns.resolver.Resolver(configure=False)
-    resolver.nameservers = ["8.8.8.8", "1.1.1.1"]
 
-    records = ["A", "MX", "NS", "TXT"]
+    resolver.nameservers = [
+        "8.8.8.8",
+        "1.1.1.1"
+    ]
+
+    records = [
+        "A",
+        "MX",
+        "NS",
+        "TXT"
+    ]
 
     for record in records:
 
@@ -167,10 +190,49 @@ def dns_records():
             print(f"\n{record} Records:")
 
             for answer in answers:
+
                 print(answer)
 
-        except Exception as e:
+        except:
+
             print(f"\n{record} Records: Not Found")
+
+
+
+def subdomain_lookup():
+
+    domain = input("\nEnter domain: ")
+
+    print(f"\n[+] Checking subdomains for {domain}")
+
+    subdomains = [
+        "www",
+        "mail",
+        "smtp",
+        "ftp",
+        "api",
+        "blog",
+        "ns1",
+        "ns2"
+    ]
+
+    for sub in subdomains:
+
+        full_domain = f"{sub}.{domain}"
+
+        try:
+
+            ip = socket.gethostbyname(full_domain)
+
+            print(
+                f"[FOUND] {full_domain} -> {ip}"
+            )
+
+        except:
+
+            pass
+
+
 
 def generate_report():
 
@@ -179,6 +241,7 @@ def generate_report():
     folder = "reports"
 
     if not os.path.exists(folder):
+
         os.makedirs(folder)
 
 
@@ -193,181 +256,82 @@ def generate_report():
     )
 
 
-    print("\n[+] Collecting information...")
-
-
-    # IP Information
-
-    try:
-
-        ip = socket.gethostbyname(target)
-
-    except:
-
-        ip = "Unable to resolve"
-
-
-
-    # WHOIS
-
-    try:
-
-        whois_data = whois.whois(target)
-
-        registrar = whois_data.registrar
-        expiry = whois_data.expiration_date
-
-
-    except:
-
-        registrar = "Unavailable"
-        expiry = "Unavailable"
-
-
-
-    # SSL
-
-    try:
-
-        context = ssl.create_default_context()
-
-        with socket.create_connection(
-            (target,443),
-            timeout=5
-        ) as sock:
-
-            with context.wrap_socket(
-                sock,
-                server_hostname=target
-            ):
-
-                ssl_status = "Valid SSL Certificate"
-
-
-    except:
-
-        ssl_status = "SSL Check Failed"
-
-
-
-    # Security Headers
-
-    try:
-
-        response = requests.get(
-            "https://" + target,
-            timeout=5
-        )
-
-
-        headers = [
-            "Content-Security-Policy",
-            "X-Frame-Options",
-            "Strict-Transport-Security",
-            "X-Content-Type-Options"
-        ]
-
-
-        security = ""
-
-
-        for header in headers:
-
-            security += (
-                f"{header}: "
-                f"{response.headers.get(header)}\n"
-            )
-
-
-    except:
-
-        security = "Unable to check headers"
-
-    # DNS Records
-
-    try:
-
-        resolver = dns.resolver.Resolver(configure=False)
-        resolver.nameservers = ["8.8.8.8", "1.1.1.1"]
-
-        dns_info = ""
-
-        for record in ["A", "MX", "NS"]:
-
-            try:
-
-                answers = resolver.resolve(target, record)
-
-                dns_info += f"\n{record} Records:\n"
-
-                for answer in answers:
-                    dns_info += f"{answer}\n"
-
-            except:
-                dns_info += f"\n{record} Records: Not Found\n"
-
-    except:
-
-        dns_info = "Unable to collect DNS records"
-
     report = f"""
-
-========================================
-       MobileRecon-Termux Report
-========================================
-
+MobileRecon-Termux Security Report
 
 Target:
 {target}
 
-
-IP Address:
-{ip}
-
-
-WHOIS Registrar:
-{registrar}
-
-
-WHOIS Expiry:
-{expiry}
-
-
-SSL Status:
-{ssl_status}
-
-
-DNS Records:
-{dns_info}
-
-
-Security Headers:
-{security}
-
-
-Report Generated:
-{datetime.now()}
-
-
-========================================
+Generated:
+{timestamp}
 
 """
 
 
     try:
 
-        with open(filename,"w") as file:
+        ip = socket.gethostbyname(target)
 
-            file.write(report)
+        report += f"""
+IP Information:
+{ip}
+"""
+
+    except:
+
+        report += """
+IP Information:
+Unable to resolve
+"""
 
 
-        print("\n[+] Report saved:")
-        print(filename)
+    try:
+
+        cert = ssl.create_default_context()
+
+        report += """
+SSL:
+Enabled
+"""
+
+    except:
+
+        report += """
+SSL:
+Failed
+"""
 
 
-    except Exception as e:
+    try:
 
-        print("Error:", e)
+        data = whois.whois(target)
+
+        report += f"""
+WHOIS:
+
+Registrar:
+{data.registrar}
+
+Expiration:
+{data.expiration_date}
+
+"""
+
+    except:
+
+        report += """
+WHOIS:
+Unavailable
+"""
+
+
+    with open(filename,"w") as file:
+
+        file.write(report)
+
+
+    print("\n[+] Report saved:")
+    print(filename)
 
 
 
@@ -386,7 +350,8 @@ def menu():
 6. IP Information Lookup
 7. Generate Report
 8. DNS Records
-9. Exit
+9. Subdomain Lookup
+10. Exit
 """)
 
 
@@ -394,34 +359,53 @@ def menu():
 
 
         if choice == "1":
+
             generate_password()
 
         elif choice == "2":
+
             dns_lookup()
 
         elif choice == "3":
+
             whois_lookup()
 
         elif choice == "4":
+
             security_header()
 
         elif choice == "5":
-            ssl_certificate_check()
+
+            ssl_check()
 
         elif choice == "6":
+
             ip_lookup()
 
         elif choice == "7":
+
             generate_report()
 
         elif choice == "8":
+
             dns_records()
 
         elif choice == "9":
+
+            subdomain_lookup()
+
+        elif choice == "10":
+
             print("Exit MobileRecon")
+
             break
 
         else:
+
             print("Invalid choice")
 
-menu()
+
+
+if __name__ == "__main__":
+
+    menu()
